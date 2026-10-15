@@ -9,12 +9,6 @@ project('scrcpy', 'c',
 
 add_project_arguments('-Wmissing-prototypes', language: 'c')
 
-sdl3_dep = dependency('sdl3',
-  required: true,
-  static: true,
-  fallback: ['sdl3', 'sdl3_dep']
-)
-
 if get_option('compile_app')
     subdir('app')
 endif

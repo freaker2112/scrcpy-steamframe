@@ -50,6 +50,7 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
         echo 'export PATH="$PATH:/home/steamos/.local/bin"' >> ~/.bashrc
         export PATH="$PATH:/home/steamos/.local/bin"
     fi
+    echo "if it says it cant find the command, run: source ~/.bashrc"
 else
     echo "[scrcpy] Building client..."
     rm -rf "$BUILDDIR"

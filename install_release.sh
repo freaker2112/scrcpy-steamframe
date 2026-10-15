@@ -19,7 +19,7 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
         git clone https://github.com/libsdl-org/SDL.git
         cd SDL
         echo "Building sdl3"
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/steamos/.local
+        cmake -S . -B build -DSDL_X11=OFF -DSDL_X11_XSCRNSAVER=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/steamos/.local
         cmake --build build --parallel
         cmake --install build
         if [[ ! ":$PKG_CONFIG_PATH:" == *":/home/steamos/.local/lib/pkgconfig:"* ]]; then

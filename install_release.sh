@@ -13,27 +13,31 @@ echo "$PREBUILT_SERVER_SHA256  scrcpy-server" | sha256sum --check
 if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
     printf "\033[0;34mSteamOS detected, default install location set to mutable path\033[0m\n"
     if ! ldconfig -p | grep -q 'libSDL3'; then
-        echo "Downloading sdl3..."
+        printf "\033[0;36mDownloading sdl3...\033[0m"
         WD1=$PWD
         cd ..
         git clone https://github.com/libsdl-org/SDL.git
         cd SDL
-        echo "Building sdl3"
+        printf "\033[0;35mBuilding sdl3\033[0m"
         cmake -S . -B build -DSDL_X11=OFF -DSDL_X11_XSCRNSAVER=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/steamos/.local
         cmake --build build --parallel
         cmake --install build
-        if [[ ! ":$PKG_CONFIG_PATH:" == *":/home/steamos/.local/lib/pkgconfig"* ]]; then
-            echo 'export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/home/steamos/.local/lib/pkgconfig"' >> ~/.bash_profile
-            source ~/.bash_profile
+        if [[ ! ":$PKG_CONFIG_PATH:" == *"/home/steamos/.local/lib/pkgconfig"* ]]; then
+            echo 'export PKG_CONFIG_PATH="/home/steamos/.local/lib/pkgconfig:$PKG_CONFIG_PATH"' >> ~/.bash_profile
+            NEEDS_BASHPROFILE=1
         fi
-        if [[ ! ":$LD_LIBRARY_PATH:" == *":/home/steamos/.local/lib"* ]]; then
-            echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/steamos/.local/lib"' >> ~/.bash_profile
+        if [[ ! ":$LD_LIBRARY_PATH:" == *"/home/steamos/.local/lib"* ]]; then
+            echo 'export LD_LIBRARY_PATH="/home/steamos/.local/lib:$LD_LIBRARY_PATH"' >> ~/.bash_profile
+            NEEDS_BASHPROFILE=1
+        fi
+        if [ "$NEEDS_BASHPROFILE" = "1" ]; then
             source ~/.bash_profile
         fi
         cd /home/steamos
         rm -rf SDL
         cd $WD1
         printf "\033[0;32msdl3 installed\033[0m\n"
+
     fi
     echo "[scrcpy] Building client..."
     rm -rf "$BUILDDIR"
@@ -45,7 +49,9 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
     ninja install
     if [[ ! ":$PATH:" == *":/home/steamos/.local/bin"* ]]; then
         echo 'export PATH="$PATH:/home/steamos/.local/bin"' >> ~/.bash_profile
-        source ~/.bash_profile
+        if [ "$NEEDS_BASHPROFILE" = "1" ]; then
+            export PATH="$PATH:/home/steamos/.local/bin"
+        fi
     fi
 else
     echo "[scrcpy] Building client..."

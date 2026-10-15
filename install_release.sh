@@ -10,12 +10,21 @@ wget "$PREBUILT_SERVER_URL" -O scrcpy-server
 echo "[scrcpy] Verifying prebuilt server..."
 echo "$PREBUILT_SERVER_SHA256  scrcpy-server" | sha256sum --check
 
-echo "[scrcpy] Building client..."
-rm -rf "$BUILDDIR"
-meson setup "$BUILDDIR" --buildtype=release --strip -Db_lto=true \
-    -Dprebuilt_server=scrcpy-server
-cd "$BUILDDIR"
-ninja
-
+if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
+    echo "SteamOS detected, default install location set to mutable path"
+    echo "[scrcpy] Building client..."
+    rm -rf "$BUILDDIR"
+    meson setup "$BUILDDIR" --buildtype=release --prefix=/home/steamos/.local --strip -Db_lto=true \
+        -Dprebuilt_server=scrcpy-server
+    cd "$BUILDDIR"
+    ninja
+else
+    echo "[scrcpy] Building client..."
+    rm -rf "$BUILDDIR"
+    meson setup "$BUILDDIR" --buildtype=release --strip -Db_lto=true \
+        -Dprebuilt_server=scrcpy-server
+    cd "$BUILDDIR"
+    ninja
+fi
 echo "[scrcpy] Installing (sudo)..."
 sudo ninja install

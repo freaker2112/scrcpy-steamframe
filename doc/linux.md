@@ -29,7 +29,7 @@ Scrcpy is packaged in several distributions and package managers:
  - … (see [repology](https://repology.org/project/scrcpy/versions))
 
 
-### From an install script
+### From an install script (REQUIRED on immutable distros)
 
 To install the latest release from `master`, follow this simplified process.
 

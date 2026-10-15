@@ -12,7 +12,7 @@ echo "$PREBUILT_SERVER_SHA256  scrcpy-server" | sha256sum --check
 
 if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
     printf "\033[0;34mSteamOS detected, default install location set to mutable path\033[0m\n"
-    if ! ldconfig -p | grep -q 'libSDL3'; then
+    if ! pkg-config --exists sdl3; then
         printf "\033[0;36mDownloading sdl3...\033[0m"
         WD1=$PWD
         cd ..

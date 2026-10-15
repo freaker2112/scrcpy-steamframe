@@ -30,7 +30,7 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
             echo 'export LD_LIBRARY_PATH="/home/steamos/.local/lib:$LD_LIBRARY_PATH"' >> ~/.bash_profile
             NEEDS_BASHPROFILE=1
         fi
-        if [ "$NEEDS_BASHPROFILE" = "1" ]; then
+        if [ $NEEDS_BASHPROFILE -eq 1 ]; then
             source ~/.bash_profile
         fi
         cd /home/steamos
@@ -49,7 +49,7 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
     ninja install
     if [[ ! ":$PATH:" == *":/home/steamos/.local/bin"* ]]; then
         echo 'export PATH="$PATH:/home/steamos/.local/bin"' >> ~/.bash_profile
-        if [ "$NEEDS_BASHPROFILE" = "1" ]; then
+        if [ $NEEDS_BASHPROFILE -eq 1 ]; then
             export PATH="$PATH:/home/steamos/.local/bin"
         fi
     fi

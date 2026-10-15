@@ -44,7 +44,7 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
     echo "[scrcpy] Installing..."
     ninja install
     if ! command -v adb &> /dev/null; then
-        cp ./adb /home/steamos/.local/bin/
+        cp $WD1/adb /home/steamos/.local/bin/
     fi
     if [[ ! ":$PATH:" == *":/home/steamos/.local/bin:"* ]]; then
         echo 'export PATH="$PATH:/home/steamos/.local/bin"' >> ~/.bashrc

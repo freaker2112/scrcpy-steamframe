@@ -14,6 +14,7 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
     echo "SteamOS detected, default install location set to mutable path"
     if ! ldconfig -p | grep -q 'libSDL3'; then
         echo "Downloading sdl3..."
+        WD1=$PWD
         cd ..
         git clone https://github.com/libsdl-org/SDL.git
         cd SDL
@@ -27,6 +28,7 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
         if [[ ! ":$LD_LIBRARY_PATH:" == *":/home/steamos/.local/lib:"* ]]; then
             echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/steamos/.local/lib"' >> ~/.bashrc
         fi
+        cd $WD1
         echo "sdl3 installed"
     fi
     echo "[scrcpy] Building client..."

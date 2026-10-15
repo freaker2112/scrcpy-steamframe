@@ -11,7 +11,7 @@ echo "[scrcpy] Verifying prebuilt server..."
 echo "$PREBUILT_SERVER_SHA256  scrcpy-server" | sha256sum --check
 
 if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
-    echo "SteamOS detected, default install location set to mutable path"
+    printf "\033[0;34mSteamOS detected, default install location set to mutable path\033[0m\n"
     if ! ldconfig -p | grep -q 'libSDL3'; then
         echo "Downloading sdl3..."
         WD1=$PWD
@@ -22,18 +22,18 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
         cmake -S . -B build -DSDL_X11=OFF -DSDL_X11_XSCRNSAVER=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/steamos/.local
         cmake --build build --parallel
         cmake --install build
-        if [[ ! ":$PKG_CONFIG_PATH:" == *":/home/steamos/.local/lib/pkgconfig:"* ]]; then
+        if [[ ! ":$PKG_CONFIG_PATH:" == *":/home/steamos/.local/lib/pkgconfig"* ]]; then
             echo 'export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/home/steamos/.local/lib/pkgconfig"' >> ~/.bash_profile
             source ~/.bash_profile
         fi
-        if [[ ! ":$LD_LIBRARY_PATH:" == *":/home/steamos/.local/lib:"* ]]; then
+        if [[ ! ":$LD_LIBRARY_PATH:" == *":/home/steamos/.local/lib"* ]]; then
             echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/steamos/.local/lib"' >> ~/.bash_profile
             source ~/.bash_profile
         fi
         cd /home/steamos
         rm -rf SDL
         cd $WD1
-        echo "sdl3 installed"
+        printf "\033[0;32msdl3 installed\033[0m\n"
     fi
     echo "[scrcpy] Building client..."
     rm -rf "$BUILDDIR"
@@ -43,6 +43,10 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
     ninja
     echo "[scrcpy] Installing..."
     ninja install
+    if [[ ! ":$PATH:" == *":/home/steamos/.local/bin"* ]]; then
+        echo 'export PATH="$PATH:/home/steamos/.local/bin"' >> ~/.bash_profile
+        source ~/.bash_profile
+    fi
 else
     echo "[scrcpy] Building client..."
     rm -rf "$BUILDDIR"

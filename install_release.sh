@@ -35,9 +35,6 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
         cd $WD1
         printf "\033[0;32msdl3 installed\033[0m\n"
     fi
-    if ! command -v adb &> /dev/null; then
-        cp ./adb /home/steamos/.local/bin/
-    fi
     echo "[scrcpy] Building client..."
     rm -rf "$BUILDDIR"
     meson setup "$BUILDDIR" --buildtype=release --prefix=/home/steamos/.local --strip -Db_lto=true \
@@ -46,6 +43,9 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
     ninja
     echo "[scrcpy] Installing..."
     ninja install
+    if ! command -v adb &> /dev/null; then
+        cp ./adb /home/steamos/.local/bin/
+    fi
     if [[ ! ":$PATH:" == *":/home/steamos/.local/bin:"* ]]; then
         echo 'export PATH="$PATH:/home/steamos/.local/bin"' >> ~/.bashrc
         export PATH="$PATH:/home/steamos/.local/bin"

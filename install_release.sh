@@ -22,23 +22,21 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
         cmake -S . -B build -DSDL_X11=OFF -DSDL_X11_XSCRNSAVER=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/steamos/.local
         cmake --build build --parallel
         cmake --install build
-        if [[ ! ":$PKG_CONFIG_PATH:" == *"/home/steamos/.local/lib/pkgconfig"* ]]; then
-            echo 'export PKG_CONFIG_PATH="/home/steamos/.local/lib/pkgconfig:$PKG_CONFIG_PATH"' >> ~/.bash_profile
-            NEEDS_BASHPROFILE=1
+        if [[ ! ":$PKG_CONFIG_PATH:" == *":/home/steamos/.local/lib/pkgconfig:"* ]]; then
+            echo 'export PKG_CONFIG_PATH="/home/steamos/.local/lib/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH%:}}"' >> ~/.bash_profile
+            export PKG_CONFIG_PATH="/home/steamos/.local/lib/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH%:}}"
         fi
-        if [[ ! ":$LD_LIBRARY_PATH:" == *"/home/steamos/.local/lib"* ]]; then
-            echo 'export LD_LIBRARY_PATH="/home/steamos/.local/lib:$LD_LIBRARY_PATH"' >> ~/.bash_profile
-            NEEDS_BASHPROFILE=1
-        fi
-        if [ $NEEDS_BASHPROFILE -eq 1 ]; then
-            source ~/.bash_profile
+        if [[ ! ":$LD_LIBRARY_PATH:" == *":/home/steamos/.local/lib:"* ]]; then
+            echo 'export LD_LIBRARY_PATH="/home/steamos/.local/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH%:}}"' >> ~/.bash_profile
+            export LD_LIBRARY_PATH="/home/steamos/.local/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH%:}}"
         fi
         cd /home/steamos
-        rm -rf SDL
+        rm -rf SDL/
         cd $WD1
         printf "\033[0;32msdl3 installed\033[0m\n"
 
     fi
+
     echo "[scrcpy] Building client..."
     rm -rf "$BUILDDIR"
     meson setup "$BUILDDIR" --buildtype=release --prefix=/home/steamos/.local --strip -Db_lto=true \
@@ -47,11 +45,9 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
     ninja
     echo "[scrcpy] Installing..."
     ninja install
-    if [[ ! ":$PATH:" == *":/home/steamos/.local/bin"* ]]; then
+    if [[ ! ":$PATH:" == *":/home/steamos/.local/bin:"* ]]; then
         echo 'export PATH="$PATH:/home/steamos/.local/bin"' >> ~/.bash_profile
-        if [ $NEEDS_BASHPROFILE -eq 1 ]; then
-            export PATH="$PATH:/home/steamos/.local/bin"
-        fi
+        export PATH="$PATH:/home/steamos/.local/bin"
     fi
 else
     echo "[scrcpy] Building client..."

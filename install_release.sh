@@ -24,10 +24,12 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
         cmake --install build
         if [[ ! ":$PKG_CONFIG_PATH:" == *":/home/steamos/.local/lib/pkgconfig:"* ]]; then
             echo 'export PKG_CONFIG_PATH="/home/steamos/.local/lib/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH%:}}"' >> ~/.bash_profile
+            echo 'export PKG_CONFIG_PATH="/home/steamos/.local/lib/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH%:}}"' >> ~/.bashrc
             export PKG_CONFIG_PATH="/home/steamos/.local/lib/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH%:}}"
         fi
         if [[ ! ":$LD_LIBRARY_PATH:" == *":/home/steamos/.local/lib:"* ]]; then
             echo 'export LD_LIBRARY_PATH="/home/steamos/.local/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH%:}}"' >> ~/.bash_profile
+            echo 'export LD_LIBRARY_PATH="/home/steamos/.local/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH%:}}"' >> ~/.bashrc
             export LD_LIBRARY_PATH="/home/steamos/.local/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH%:}}"
         fi
         cd /home/steamos
@@ -48,6 +50,7 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
     ninja install
     if [[ ! ":$PATH:" == *":/home/steamos/.local/bin:"* ]]; then
         echo 'export PATH="$PATH:/home/steamos/.local/bin"' >> ~/.bash_profile
+        echo 'export PATH="$PATH:/home/steamos/.local/bin"' >> ~/.bashrc
         export PATH="$PATH:/home/steamos/.local/bin"
     fi
 else

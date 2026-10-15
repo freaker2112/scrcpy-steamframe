@@ -28,6 +28,8 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
         if [[ ! ":$LD_LIBRARY_PATH:" == *":/home/steamos/.local/lib:"* ]]; then
             echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/steamos/.local/lib"' >> ~/.bashrc
         fi
+        cd /home/steamos
+        rm -rf SDL
         cd $WD1
         echo "sdl3 installed"
     fi

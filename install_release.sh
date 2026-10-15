@@ -23,10 +23,12 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
         cmake --build build --parallel
         cmake --install build
         if [[ ! ":$PKG_CONFIG_PATH:" == *":/home/steamos/.local/lib/pkgconfig:"* ]]; then
-            echo 'export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/home/steamos/.local/lib/pkgconfig"' >> ~/.bashrc
+            echo 'export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/home/steamos/.local/lib/pkgconfig"' >> ~/.bash_profile
+            source ~/.bash_profile
         fi
         if [[ ! ":$LD_LIBRARY_PATH:" == *":/home/steamos/.local/lib:"* ]]; then
-            echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/steamos/.local/lib"' >> ~/.bashrc
+            echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/steamos/.local/lib"' >> ~/.bash_profile
+            source ~/.bash_profile
         fi
         cd /home/steamos
         rm -rf SDL
@@ -39,6 +41,8 @@ if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
         -Dprebuilt_server=scrcpy-server
     cd "$BUILDDIR"
     ninja
+    echo "[scrcpy] Installing..."
+    ninja install
 else
     echo "[scrcpy] Building client..."
     rm -rf "$BUILDDIR"
@@ -46,6 +50,6 @@ else
         -Dprebuilt_server=scrcpy-server
     cd "$BUILDDIR"
     ninja
+
+    sudo ninja install
 fi
-echo "[scrcpy] Installing (sudo)..."
-sudo ninja install

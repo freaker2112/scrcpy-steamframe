@@ -12,6 +12,23 @@ echo "$PREBUILT_SERVER_SHA256  scrcpy-server" | sha256sum --check
 
 if grep -q 'ID=steamos' /etc/os-release 2>/dev/null; then
     echo "SteamOS detected, default install location set to mutable path"
+    if ! ldconfig -p | grep -q 'libSDL3'; then
+        echo "Downloading sdl3..."
+        cd ..
+        git clone https://github.com/libsdl-org/SDL.git
+        cd SDL
+        echo "Building sdl3"
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/home/steamos/.local
+        cmake --build build --parallel
+        cmake --install build
+        if [[ ! ":$PKG_CONFIG_PATH:" == *":/home/steamos/.local/lib/pkgconfig:"* ]]; then
+            echo 'export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/home/steamos/.local/lib/pkgconfig"' >> ~/.bashrc
+        fi
+        if [[ ! ":$LD_LIBRARY_PATH:" == *":/home/steamos/.local/lib:"* ]]; then
+            echo 'export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/steamos/.local/lib"' >> ~/.bashrc
+        fi
+        echo "sdl3 installed"
+    fi
     echo "[scrcpy] Building client..."
     rm -rf "$BUILDDIR"
     meson setup "$BUILDDIR" --buildtype=release --prefix=/home/steamos/.local --strip -Db_lto=true \
